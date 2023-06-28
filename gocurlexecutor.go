@@ -2,7 +2,6 @@ package gocurlexecutor
 
 import (
 	"errors"
-	"io"
 	"net/http"
 	"strings"
 
@@ -17,27 +16,27 @@ var argumentParsers = map[string]ArgumentParser{
 	"-H": parseHeaderArgument,
 }
 
-func Execute(command string) (string, error) {
+func Execute(command string) (http.Response, error) {
 
 	options, err := Parse(command)
 	if err != nil {
-		return "", err
+		return http.Response{}, err
 	}
 
 	response, err := sendRequest(options)
 	if err != nil {
-		return "", nil
+		return http.Response{}, nil
 	}
 
 	return response, nil
 }
 
-func sendRequest(options map[string]string) (string, error) {
+func sendRequest(options map[string]string) (http.Response, error) {
 
 	client := &http.Client{}
 	request, err := http.NewRequest(options["method"], options["url"], nil)
 	if err != nil {
-		return "", errors.New("error while creating request")
+		return http.Response{}, errors.New("error while creating request")
 	}
 
 	headers := util.GetHeaders(options)
@@ -47,15 +46,10 @@ func sendRequest(options map[string]string) (string, error) {
 
 	response, err := client.Do(request)
 	if err != nil {
-		return "", errors.New("error while sending request")
+		return http.Response{}, errors.New("error while sending request")
 	}
-	defer response.Body.Close()
 
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-		return "", errors.New("error while reading response")
-	}
-	return string(body), nil
+	return *response, nil
 }
 
 func Parse(command string) (map[string]string, error) {
