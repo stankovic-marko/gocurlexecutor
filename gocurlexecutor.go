@@ -34,7 +34,8 @@ func Execute(command string) (http.Response, error) {
 func sendRequest(options map[string]string) (http.Response, error) {
 
 	client := &http.Client{}
-	request, err := http.NewRequest(options["method"], options["url"], nil)
+	data := options["data"]
+	request, err := http.NewRequest(options["method"], options["url"], strings.NewReader(data))
 	if err != nil {
 		return http.Response{}, errors.New("error while creating request")
 	}
@@ -117,7 +118,14 @@ func parseMethodArgument(arguments []string, index int) (map[string]string, erro
 
 func parseDataArgument(arguments []string, index int) (map[string]string, error) {
 
-	return nil, nil
+	data := arguments[index+1]
+	if !strings.HasPrefix(data, `"`) || !strings.HasSuffix(data, `"`) {
+		return nil, errors.New(`data must be contained within ""`)
+	}
+	options := make(map[string]string)
+	options["data"] = data[1 : len(data)-1]
+
+	return options, nil
 }
 
 func parseHeaderArgument(arguments []string, index int) (map[string]string, error) {

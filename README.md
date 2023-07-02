@@ -28,6 +28,6 @@ func main() {
 | ------ | ----------- | ------------------------ |
 | -X     | Method      | :white_check_mark:       |
 | -H     | Header      | :white_check_mark:       |
-| -d     | Data        | :hourglass_flowing_sand: |
-| -b     | Cookie data | :black_square_button:    |
+| -d     | Data        | :white_check_mark:       |
+| -b     | Cookie data | :hourglass_flowing_sand: |
 | -x     | Proxy       | :black_square_button:    |
