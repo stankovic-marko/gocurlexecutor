@@ -8,6 +8,7 @@ import (
 	"github.com/stankovic-marko/gocurlexecutor/util"
 )
 
+// ArgumentParser is used to define a parsing function for each supported option.
 type ArgumentParser func(arguments []string, index int) (map[string]string, error)
 
 var argumentParsers = map[string]ArgumentParser{
@@ -16,6 +17,7 @@ var argumentParsers = map[string]ArgumentParser{
 	"-H": parseHeaderArgument,
 }
 
+// Execute executes command and returns an HTTP response.
 func Execute(command string) (http.Response, error) {
 
 	options, err := Parse(command)
@@ -53,6 +55,7 @@ func sendRequest(options map[string]string) (http.Response, error) {
 	return *response, nil
 }
 
+// Parse parses command and returns command options.
 func Parse(command string) (map[string]string, error) {
 
 	arguments := strings.Split(command, " ")
