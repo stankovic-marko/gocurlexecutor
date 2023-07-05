@@ -15,6 +15,7 @@ var argumentParsers = map[string]ArgumentParser{
 	"-X": parseMethodArgument,
 	"-d": parseDataArgument,
 	"-H": parseHeaderArgument,
+	"-b": parseCookieArgument,
 }
 
 // Execute executes command and returns an HTTP response.
@@ -45,6 +46,16 @@ func sendRequest(options map[string]string) (http.Response, error) {
 	headers := util.GetHeaders(options)
 	for key, value := range headers {
 		request.Header.Add(key, value)
+	}
+
+	cookies := util.GetCookies(options)
+	for key, value := range cookies {
+		cookie := &http.Cookie{
+			Name:   key,
+			Value:  value,
+			MaxAge: 300,
+		}
+		request.AddCookie(cookie)
 	}
 
 	response, err := client.Do(request)
@@ -144,6 +155,26 @@ func parseHeaderArgument(arguments []string, index int) (map[string]string, erro
 	key := components[0]
 	value := components[1]
 	key = "H-" + key
+
+	options := make(map[string]string)
+	options[key] = value
+
+	return options, nil
+}
+
+func parseCookieArgument(arguments []string, index int) (map[string]string, error) {
+	data := arguments[index+1]
+	if !strings.HasPrefix(data, `"`) || !strings.HasSuffix(data, `"`) {
+		return nil, errors.New(`header must be contained within ""`)
+	}
+	data = data[1 : len(data)-1]
+	components := strings.Split(data, "=")
+	if len(components) != 2 {
+		return nil, errors.New("invalid cookie definition")
+	}
+	key := components[0]
+	value := components[1]
+	key = "C-" + key
 
 	options := make(map[string]string)
 	options[key] = value

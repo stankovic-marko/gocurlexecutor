@@ -29,5 +29,5 @@ func main() {
 | -X     | Method      | :white_check_mark:       |
 | -H     | Header      | :white_check_mark:       |
 | -d     | Data        | :white_check_mark:       |
-| -b     | Cookie data | :hourglass_flowing_sand: |
-| -x     | Proxy       | :black_square_button:    |
+| -b     | Cookie data | :white_check_mark:       |
+| -x     | Proxy       | :hourglass_flowing_sand: |
